@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom YouTube Player</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="video-container">
+      <div id="player"></div>
+
+      <!-- 🎛 Custom Controls -->
+      <div class="controls">
+        <button id="playPause" class="control-btn">
+          <i class="fas fa-play">▶️</i>
+        </button>
+        <input
+          type="range"
+          id="seek"
+          min="0"
+          max="100"
+          value="0"
+          class="slider"
+        />
+        <button id="restart" class="control-btn">
+          <i class="fas fa-redo">🔄️</i>
+        </button>
+        <button id="muteUnmute" class="control-btn">
+          <i class="fas fa-volume-up">🔇</i>
+        </button>
+
+        <div class="volume-container">
+          <!-- <i class="fas fa-volume-down"></i> -->
+          <input
+            type="range"
+            id="volume"
+            min="0"
+            max="100"
+            value="100"
+            class="slider"
+          />
+          <!-- <i class="fas fa-volume-up"></i> -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player("player", {
+          height: "315",
+          width: "560",
+          videoId: "z7J_JRXIywU", // Replace with your video ID
+          playerVars: {
+            autoplay: 1, // Auto-play video
+            mute: 0, // Start unmuted
+            controls: 0, // Hides YouTube default controls
+            modestbranding: 1, // Removes YouTube logo
+            rel: 0, // No related videos at the end
+            iv_load_policy: 3, // Hides annotations/popups
+            fs: 0, // Disable fullscreen button
+            playsinline: 1, // Plays inline instead of full screen on mobile
+            disablekb: 1, // Disable keyboard shortcuts
+            cc_load_policy: 0, // Hides subtitles/closed captions
+            widget_referrer: "none", // Prevents YouTube UI from tracking referrer
+          },
+          events: {
+            onReady: onPlayerReady,
+          },
+        });
+      }
+
+      function onPlayerReady(event) {
+        const playPause = document.getElementById("playPause");
+        const restart = document.getElementById("restart");
+        const muteUnmute = document.getElementById("muteUnmute");
+        const volumeSlider = document.getElementById("volume");
+        const seekBar = document.getElementById("seek");
+
+        playPause.addEventListener("click", () => {
+          if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+            player.pauseVideo();
+            playPause.innerHTML = '<i class="fas fa-play">▶️</i>';
+          } else {
+            player.playVideo();
+            playPause.innerHTML = '<i class="fas fa-pause">⏸️</i>';
+          }
+        });
+
+        restart.addEventListener("click", () => {
+          player.seekTo(0);
+        });
+
+        muteUnmute.addEventListener("click", () => {
+          if (player.isMuted()) {
+            player.unMute();
+            muteUnmute.innerHTML = '<i class="fas fa-volume-up">🔇</i>';
+            volumeSlider.value = 100;
+            player.setVolume(100);
+          } else {
+            player.mute();
+            muteUnmute.innerHTML = '<i class="fas fa-volume-mute">🔊</i>';
+          }
+        });
+
+        volumeSlider.addEventListener("input", function () {
+          player.setVolume(this.value);
+          if (this.value == 0) {
+            muteUnmute.innerHTML = '<i class="fas fa-volume-mute">🔊</i>';
+          } else {
+            muteUnmute.innerHTML = '<i class="fas fa-volume-up">🔇</i>';
+          }
+        });
+
+        seekBar.addEventListener("input", function () {
+          const seekTo = (this.value / 100) * player.getDuration();
+          player.seekTo(seekTo);
+        });
+
+        setInterval(() => {
+          if (player && player.getCurrentTime) {
+            const currentTime = player.getCurrentTime();
+            const duration = player.getDuration();
+            if (duration) {
+              seekBar.value = (currentTime / duration) * 100;
+            }
+          }
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
