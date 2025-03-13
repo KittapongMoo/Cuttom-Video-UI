@@ -59,17 +59,16 @@
           width: "560",
           videoId: "z7J_JRXIywU", // Replace with your video ID
           playerVars: {
-            autoplay: 1, // Auto-play video
-            mute: 0, // Start unmuted
-            controls: 0, // Hides YouTube default controls
-            modestbranding: 1, // Removes YouTube logo
-            rel: 0, // No related videos at the end
-            iv_load_policy: 3, // Hides annotations/popups
-            fs: 0, // Disable fullscreen button
-            playsinline: 1, // Plays inline instead of full screen on mobile
-            disablekb: 1, // Disable keyboard shortcuts
-            cc_load_policy: 0, // Hides subtitles/closed captions
-            widget_referrer: "none", // Prevents YouTube UI from tracking referrer
+            autoplay: 1,
+            mute: 0,
+            controls: 0, // Hide YouTube controls
+            modestbranding: 1,
+            rel: 0,
+            iv_load_policy: 3,
+            fs: 0,
+            playsinline: 1,
+            disablekb: 1,
+            cc_load_policy: 0,
           },
           events: {
             onReady: onPlayerReady,
